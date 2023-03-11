@@ -1,3 +1,7 @@
+![coding quiz](https://user-images.githubusercontent.com/113803421/224510878-1a553293-8ab3-4af3-8fc0-841393bd5149.png)
+
+https://devnathannguyen.github.io/code-quiz/
+
 # 04 Web APIs: Code Quiz
 
 ## Your Task
