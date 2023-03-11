@@ -1,3 +1,8 @@
+let timeLeft = 60;
+let currentQuiz = 0;
+let score = 0;
+let timerInterval;
+
 const quizData = [
     {
         question: "What year was the Golden State Warriors founded?",
@@ -82,24 +87,97 @@ const quizData = [
 ];
 
 // getting ready to modify html
-const quiz = document.getElementById('quiz');
-const answerEls = document.querySelectorAll('.answer');
-const questionEl = document.getElementById('question');
-const a_text = document.getElementById('a_text');
-const b_text = document.getElementById('b_text');
-const c_text = document.getElementById('c_text')
-const d_text = document.getElementById('d_text');
-const submitBtn = document.getElementById('submit');
+const quiz = document.getElementById("quiz");
+const answerEls = document.querySelectorAll(".answer");
+const questionEl = document.getElementById("question");
+const a_text = document.getElementById("a_text");
+const b_text = document.getElementById("b_text");
+const c_text = document.getElementById("c_text");
+const d_text = document.getElementById("d_text");
+const submitBtn = document.getElementById("submit");
 
-quizlet()
-// main quiz func
-function quizlet() {
-    // declaring data and score
-    const currentQuizData = quizData[currentQuiz]
+// timer
+function startTimer() {
+    timerInterval = setInterval(function () {
+    timeLeft--;
+    document.getElementById("timer").innerText = `0:${timeLeft.toString().padStart(2, "0")}`;
+    if (timeLeft === 0) {
+        endQuiz();
+    }
+}, 1000);
+}
+
+// load question and answer choices
+function loadQuiz() {
+    // declaring data
+    const currentQuizData = quizData[currentQuiz];
     // setting quiz data
     questionEl.innerText = currentQuizData.question;
-    a_text.innerText = currentQuizData.a
-    b_text.innerText = currentQuizData.b
-    c_text.innerText = currentQuizData.c
-    d_text.innerText = currentQuizData.d
+    a_text.innerText = currentQuizData.a;
+    b_text.innerText = currentQuizData.b;
+    c_text.innerText = currentQuizData.c;
+    d_text.innerText = currentQuizData.d;
 }
+
+// get selected answer
+function getSelected() {
+    let answer;
+    answerEls.forEach((answerEl) => {
+    if (answerEl.checked) {
+        answer = answerEl.id;
+    }
+});
+return answer;
+}
+
+// deselect answer
+function deselectAnswers() {
+    answerEls.forEach((answerEl) => {
+    answerEl.checked = false;
+    });
+}
+
+// check answer
+function checkAnswer() {
+const answer = getSelected();
+if (answer === quizData[currentQuiz].answer) {
+    score++;
+    } else {
+    timeLeft -= 1;
+    }
+    currentQuiz++;
+if (currentQuiz < quizData.length) {
+    loadQuiz();
+    } else {
+    endQuiz();
+    }
+}
+
+// end quiz
+function endQuiz() {
+    clearInterval(timerInterval);
+    quiz.innerHTML = `
+    <h2>Your score: ${score}</h2>
+    <form>
+    <label for="initials">Enter initials:</label>
+    <input type="text" id="initials" name="initials" maxlength="3">
+    <button id="save">Save</button>
+    </form>
+`;
+const saveBtn = document.getElementById("save");
+saveBtn.addEventListener("click", saveScore);
+}
+
+// save score
+function saveScore(e) {
+    e.preventDefault();
+    const initials = document.getElementById("initials").value;
+    // save score to localStorage or a backend
+}
+
+// event listeners
+submitBtn.addEventListener("click", checkAnswer);
+
+// start quiz
+loadQuiz();
+startTimer();
